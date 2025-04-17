@@ -1,0 +1,162 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <h1><i class="fas fa-home me-2"></i>Student Dashboard</h1>
+        <p class="lead">Welcome, {{ student.first_name }} {{ student.last_name }}!</p>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Student Profile -->
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="fas fa-user me-2"></i>Your Profile</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>Student Number:</strong> {{ student.student_number }}</p>
+                <p><strong>Name:</strong> {{ student.first_name }} {{ student.last_name }}</p>
+                <p><strong>Email:</strong> {{ student.email or 'Not provided' }}</p>
+            </div>
+        </div>
+        
+        <!-- Recent Attendance -->
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0"><i class="fas fa-clipboard-check me-2"></i>Recent Attendance</h5>
+            </div>
+            <div class="card-body">
+                {% if attendance %}
+                    <div class="list-group">
+                        {% for record in attendance %}
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-0">{{ record.date.strftime('%Y-%m-%d') }}</h6>
+                                </div>
+                                <span class="badge 
+                                    {% if record.status == 'present' %}bg-success
+                                    {% elif record.status == 'absent' %}bg-danger
+                                    {% elif record.status == 'late' %}bg-warning
+                                    {% endif %}">
+                                    {{ record.status|capitalize }}
+                                </span>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-center text-muted">No attendance records found.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-8">
+        <!-- Available Quizzes -->
+        <div class="card mb-4">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0"><i class="fas fa-question-circle me-2"></i>Available Quizzes</h5>
+            </div>
+            <div class="card-body">
+                {% if available_quizzes %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Questions</th>
+                                    <th>Time Limit</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for quiz in available_quizzes %}
+                                    <tr>
+                                        <td>{{ quiz.title }}</td>
+                                        <td>{{ quiz.questions|length }}</td>
+                                        <td>
+                                            {% if quiz.time_limit %}
+                                                {{ quiz.time_limit }} minutes
+                                            {% else %}
+                                                No limit
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if quiz.questions|length > 0 %}
+                                                <a href="{{ url_for('take_quiz', id=quiz.id) }}" class="btn btn-sm btn-primary">
+                                                    <i class="fas fa-pen me-1"></i> Take Quiz
+                                                </a>
+                                            {% else %}
+                                                <button class="btn btn-sm btn-secondary" disabled>
+                                                    <i class="fas fa-times-circle me-1"></i> No Questions
+                                                </button>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p class="text-center text-muted">No available quizzes at this time.</p>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Completed Quizzes -->
+        <div class="card">
+            <div class="card-header bg-dark">
+                <h5 class="mb-0"><i class="fas fa-check-circle me-2"></i>Completed Quizzes</h5>
+            </div>
+            <div class="card-body">
+                {% if completed_quizzes %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Score</th>
+                                    <th>Percentage</th>
+                                    <th>Completed</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for quiz, result in completed_quizzes %}
+                                    <tr>
+                                        <td>{{ quiz.title }}</td>
+                                        <td>{{ result.score }} / {{ result.total_points }}</td>
+                                        <td>
+                                            {% if result.total_points > 0 %}
+                                                {% set percentage = (result.score / result.total_points * 100)|round|int %}
+                                                <div class="progress" style="height: 20px;">
+                                                    <div class="progress-bar 
+                                                        {% if percentage >= 80 %}bg-success
+                                                        {% elif percentage >= 60 %}bg-info
+                                                        {% elif percentage >= 40 %}bg-warning
+                                                        {% else %}bg-danger
+                                                        {% endif %}" 
+                                                        role="progressbar" 
+                                                        style="width: {{ percentage }}%;" 
+                                                        aria-valuenow="{{ percentage }}" 
+                                                        aria-valuemin="0" 
+                                                        aria-valuemax="100">{{ percentage }}%</div>
+                                                </div>
+                                            {% else %}
+                                                N/A
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ result.completed_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p class="text-center text-muted">You haven't completed any quizzes yet.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

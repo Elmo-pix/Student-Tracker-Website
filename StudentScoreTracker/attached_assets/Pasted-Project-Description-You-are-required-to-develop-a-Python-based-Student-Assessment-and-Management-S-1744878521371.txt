@@ -1,0 +1,41 @@
+Project Description:
+You are required to develop a Python-based Student Assessment and Management System
+that provides an integrated platform for recording attendance, quizzes, and exams. The system
+should also allow the addition of student accounts, record their performance using student
+numbers, and generate reports.
+Project Requirements:
+Your system should include the following features:
+1. User Management
+● Admin Login: Secure authentication for system administrators.
+● Student Accounts: Ability to add new student accounts with student numbers, names,
+and other relevant details.
+● Role-Based Access: Admins can manage data, while students can only view their
+records.
+2. Attendance Recording
+● Record student attendance based on their student number and date.
+● Display attendance reports for individual students or the entire class.
+● Export attendance records as a report (CSV or PDF).
+3. Assessment Platform
+● Quiz and Exam Module: Allow students to take quizzes and exams.
+● Question Bank: Admins should be able to create and store multiple-choice and
+short-answer questions.
+● Automated Grading: Multiple-choice questions should be auto-graded, while
+short-answer questions require manual grading.
+4. Performance Recording and Reports
+● Record quiz and exam scores by selecting the student’s number.
+● Generate student performance reports.
+● Export reports in CSV or PDF format.
+5. Data Storage
+● Use a database (SQLite, MySQL, or PostgreSQL) to store student records, attendance,
+and assessment results.
+Technical Requirements:
+● Programming Language: Python (with Flask or Django for a web-based approach)
+● Database: SQLite/MySQL/PostgreSQL
+● UI (Optional): Tkinter (for GUI-based) or Flask/Django (for web-based)
+● Report Generation: Pandas and ReportLab for data processing and PDF generation
+Submission Guidelines:
+● Submit the complete source code with proper documentation.
+● Include a README file explaining how to set up and use the system.
+● Ensure the system is functional and tested before submission.
+● Provide a short demo video showcasing the system's features (optional but
+recommended).

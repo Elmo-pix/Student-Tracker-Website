@@ -1,0 +1,84 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<!-- This is almost identical to take_quiz.html but can be customized for exams if needed -->
+<!-- Quiz Timer (if time limit exists) -->
+{% if quiz.time_limit %}
+<div class="quiz-timer" id="quiz-time-limit" data-minutes="{{ quiz.time_limit }}">
+    <i class="fas fa-clock me-2"></i>Time Remaining: <span id="timer-display">{{ quiz.time_limit }}:00</span>
+</div>
+{% endif %}
+
+<div class="row mb-4">
+    <div class="col-md-12">
+        <h1><i class="fas fa-pencil-alt me-2"></i>{{ quiz.title }} (Exam)</h1>
+        <p class="lead">{{ quiz.description or 'Complete all questions in this exam and submit your answers.' }}</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="fas fa-list me-2"></i>Exam Questions</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('take_quiz', id=quiz.id) }}" id="quiz-form">
+                    {% for question in questions %}
+                        <div class="question-card">
+                            <div class="question-number">Question {{ loop.index }}</div>
+                            <div class="question-text">{{ question.question_text }}</div>
+                            
+                            {% if question.question_type == 'multiple_choice' %}
+                                <div class="question-options">
+                                    <div class="form-check question-option">
+                                        <input class="form-check-input" type="radio" name="question_{{ question.id }}" id="option_{{ question.id }}_A" value="A" required>
+                                        <label class="form-check-label" for="option_{{ question.id }}_A">
+                                            A: {{ question.option_a }}
+                                        </label>
+                                    </div>
+                                    <div class="form-check question-option">
+                                        <input class="form-check-input" type="radio" name="question_{{ question.id }}" id="option_{{ question.id }}_B" value="B" required>
+                                        <label class="form-check-label" for="option_{{ question.id }}_B">
+                                            B: {{ question.option_b }}
+                                        </label>
+                                    </div>
+                                    <div class="form-check question-option">
+                                        <input class="form-check-input" type="radio" name="question_{{ question.id }}" id="option_{{ question.id }}_C" value="C" required>
+                                        <label class="form-check-label" for="option_{{ question.id }}_C">
+                                            C: {{ question.option_c }}
+                                        </label>
+                                    </div>
+                                    <div class="form-check question-option">
+                                        <input class="form-check-input" type="radio" name="question_{{ question.id }}" id="option_{{ question.id }}_D" value="D" required>
+                                        <label class="form-check-label" for="option_{{ question.id }}_D">
+                                            D: {{ question.option_d }}
+                                        </label>
+                                    </div>
+                                </div>
+                            {% else %}
+                                <div class="mb-3">
+                                    <textarea class="form-control" name="question_{{ question.id }}" rows="3" required></textarea>
+                                </div>
+                            {% endif %}
+                            
+                            <div class="text-muted mt-2">
+                                <small>Points: {{ question.points }}</small>
+                            </div>
+                        </div>
+                    {% endfor %}
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                        <a href="{{ url_for('student_dashboard') }}" class="btn btn-secondary me-md-2">
+                            <i class="fas fa-times-circle me-1"></i> Cancel
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-paper-plane me-1"></i> Submit Exam
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

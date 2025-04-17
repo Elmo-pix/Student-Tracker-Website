@@ -1,0 +1,92 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <h1><i class="fas fa-chart-bar me-2"></i>Reports</h1>
+        <p class="lead">Generate and download student performance reports.</p>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Student Reports -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="fas fa-user-graduate me-2"></i>Student Reports</h5>
+            </div>
+            <div class="card-body">
+                <p>Generate a comprehensive report for a specific student, including attendance and assessment results.</p>
+                
+                <div class="list-group mt-3">
+                    {% if students %}
+                        {% for student in students %}
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-0">{{ student.first_name }} {{ student.last_name }}</h6>
+                                    <small class="text-muted">{{ student.student_number }}</small>
+                                </div>
+                                <a href="{{ url_for('student_report', id=student.id) }}" class="btn btn-sm btn-primary">
+                                    <i class="fas fa-download me-1"></i> Export CSV
+                                </a>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-center text-muted">No students found in the system.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Quiz Reports -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0"><i class="fas fa-question-circle me-2"></i>Quiz Reports</h5>
+            </div>
+            <div class="card-body">
+                <p>Generate a report showing all student results for a specific quiz or exam.</p>
+                
+                <div class="list-group mt-3">
+                    {% if quizzes %}
+                        {% for quiz in quizzes %}
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-0">{{ quiz.title }}</h6>
+                                    <small class="text-muted">{{ quiz.created_at.strftime('%Y-%m-%d') }}</small>
+                                </div>
+                                <a href="{{ url_for('quiz_report', id=quiz.id) }}" class="btn btn-sm btn-info">
+                                    <i class="fas fa-download me-1"></i> Export CSV
+                                </a>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-center text-muted">No quizzes found in the system.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <!-- Attendance Export -->
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0"><i class="fas fa-clipboard-check me-2"></i>Attendance Report</h5>
+            </div>
+            <div class="card-body">
+                <p>Export the complete attendance record for all students.</p>
+                
+                <div class="d-grid gap-2 d-md-flex justify-content-md-start mt-3">
+                    <a href="{{ url_for('export_attendance') }}" class="btn btn-success">
+                        <i class="fas fa-file-download me-1"></i> Export Attendance CSV
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

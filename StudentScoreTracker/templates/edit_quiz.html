@@ -1,0 +1,205 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <h1><i class="fas fa-edit me-2"></i>Edit Quiz: {{ quiz.title }}</h1>
+        <p class="lead">Add and manage questions for this quiz.</p>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Add Question Form -->
+    <div class="col-md-5">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="fas fa-plus-circle me-2"></i>Add Question</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('edit_quiz', id=quiz.id) }}">
+                    {{ form.hidden_tag() }}
+                    
+                    <div class="mb-3">
+                        {{ form.question_text.label(class="form-label") }}
+                        {{ form.question_text(class="form-control", rows="3") }}
+                        {% if form.question_text.errors %}
+                            <div class="text-danger">
+                                {% for error in form.question_text.errors %}
+                                    <small>{{ error }}</small>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        {{ form.question_type.label(class="form-label") }}
+                        {{ form.question_type(class="form-select", id="question_type") }}
+                        {% if form.question_type.errors %}
+                            <div class="text-danger">
+                                {% for error in form.question_type.errors %}
+                                    <small>{{ error }}</small>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3 multiple-choice-field">
+                        {{ form.option_a.label(class="form-label") }}
+                        {{ form.option_a(class="form-control") }}
+                        {% if form.option_a.errors %}
+                            <div class="text-danger">
+                                {% for error in form.option_a.errors %}
+                                    <small>{{ error }}</small>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3 multiple-choice-field">
+                        {{ form.option_b.label(class="form-label") }}
+                        {{ form.option_b(class="form-control") }}
+                        {% if form.option_b.errors %}
+                            <div class="text-danger">
+                                {% for error in form.option_b.errors %}
+                                    <small>{{ error }}</small>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3 multiple-choice-field">
+                        {{ form.option_c.label(class="form-label") }}
+                        {{ form.option_c(class="form-control") }}
+                        {% if form.option_c.errors %}
+                            <div class="text-danger">
+                                {% for error in form.option_c.errors %}
+                                    <small>{{ error }}</small>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3 multiple-choice-field">
+                        {{ form.option_d.label(class="form-label") }}
+                        {{ form.option_d(class="form-control") }}
+                        {% if form.option_d.errors %}
+                            <div class="text-danger">
+                                {% for error in form.option_d.errors %}
+                                    <small>{{ error }}</small>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        {{ form.correct_answer.label(class="form-label") }}
+                        {{ form.correct_answer(class="form-control") }}
+                        <small class="form-text text-muted">For multiple choice, use A, B, C, or D as the answer.</small>
+                        {% if form.correct_answer.errors %}
+                            <div class="text-danger">
+                                {% for error in form.correct_answer.errors %}
+                                    <small>{{ error }}</small>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        {{ form.points.label(class="form-label") }}
+                        {{ form.points(class="form-control") }}
+                        {% if form.points.errors %}
+                            <div class="text-danger">
+                                {% for error in form.points.errors %}
+                                    <small>{{ error }}</small>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="d-grid">
+                        {{ form.submit(class="btn btn-primary") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Quiz Details and Questions List -->
+    <div class="col-md-7">
+        <!-- Quiz Details -->
+        <div class="card mb-4">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Quiz Details</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Title:</strong> {{ quiz.title }}</p>
+                        <p><strong>Created:</strong> {{ quiz.created_at.strftime('%Y-%m-%d') }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Questions:</strong> {{ questions|length }}</p>
+                        <p><strong>Time Limit:</strong> 
+                            {% if quiz.time_limit %}
+                                {{ quiz.time_limit }} minutes
+                            {% else %}
+                                No limit
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+                <p><strong>Description:</strong></p>
+                <p>{{ quiz.description or 'No description provided.' }}</p>
+            </div>
+        </div>
+        
+        <!-- Questions List -->
+        <div class="card">
+            <div class="card-header bg-dark">
+                <h5 class="mb-0"><i class="fas fa-list me-2"></i>Quiz Questions</h5>
+            </div>
+            <div class="card-body">
+                {% if questions %}
+                    <div class="list-group">
+                        {% for question in questions %}
+                            <div class="list-group-item list-group-item-action">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h6 class="mb-1">Q{{ loop.index }}: {{ question.question_text }}</h6>
+                                    <small>{{ question.points }} points</small>
+                                </div>
+                                
+                                {% if question.question_type == 'multiple_choice' %}
+                                    <p class="mb-1 text-muted">Type: Multiple Choice</p>
+                                    <small>A: {{ question.option_a }}</small><br>
+                                    <small>B: {{ question.option_b }}</small><br>
+                                    <small>C: {{ question.option_c }}</small><br>
+                                    <small>D: {{ question.option_d }}</small><br>
+                                    <small class="text-success">Correct Answer: {{ question.correct_answer }}</small>
+                                {% else %}
+                                    <p class="mb-1 text-muted">Type: Short Answer</p>
+                                    <small>Answer Key: {{ question.correct_answer }}</small>
+                                {% endif %}
+                                
+                                <div class="mt-2">
+                                    <form id="delete-question-{{ question.id }}" action="{{ url_for('delete_question', id=question.id) }}" method="POST" style="display: inline;">
+                                        <button type="button" class="btn btn-sm btn-danger" onclick="confirmDelete('delete-question-{{ question.id }}', 'question')">
+                                            <i class="fas fa-trash me-1"></i> Delete
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-center text-muted">No questions added yet. Use the form to add questions to this quiz.</p>
+                {% endif %}
+            </div>
+            <div class="card-footer">
+                <a href="{{ url_for('quizzes') }}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left me-1"></i> Back to Quizzes
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
